@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'initial_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -96,6 +97,29 @@ class LoginScreen extends StatelessWidget {
                 onPressed: () {},
                 child: const Text(
                   "Entrar",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: 180,
+              height: 45,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF006C67),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const InitialScreen()),
+                  );
+                },
+                child: const Text(
+                  "Voltar",
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
