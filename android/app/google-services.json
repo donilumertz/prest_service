@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "279653808841",
+    "project_id": "prestservice-3e5a7",
+    "storage_bucket": "prestservice-3e5a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:279653808841:android:95cbc912dd8042bb736b18",
+        "android_client_info": {
+          "package_name": "com.example.prest_service"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsGQoat5c93KL3ucnQpRkt3fchBrb-STo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

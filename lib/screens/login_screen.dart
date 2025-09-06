@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:prest_service/services/auth_service.dart';
+import 'home_screen.dart';
 import 'initial_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -9,6 +11,25 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
+    final AuthService _authService = AuthService();
+
+    void _login() async {
+      try {
+        await _authService.login(
+          emailController.text.trim(),
+          passwordController.text.trim(),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Erro: ${e.toString()}")),
+        );
+      }
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFFEFF6F9),
@@ -18,13 +39,7 @@ class LoginScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               alignment: Alignment.topLeft,
-              child: Text(
-                "PS",
-                style: GoogleFonts.pacifico(
-                  color: const Color(0xFF006C67),
-                  fontSize: 22,
-                ),
-              ),
+              child: Text("PS", style: GoogleFonts.pacifico(color: const Color(0xFF006C67), fontSize: 22)),
             ),
             const SizedBox(height: 10),
             Container(
@@ -32,31 +47,12 @@ class LoginScreen extends StatelessWidget {
               child: CircleAvatar(
                 radius: 50,
                 backgroundColor: const Color(0xFF006C67),
-                child: Text(
-                  "PS",
-                  style: GoogleFonts.pacifico(
-                    fontSize: 36,
-                    color: Colors.white,
-                  ),
-                ),
+                child: Text("PS", style: GoogleFonts.pacifico(fontSize: 36, color: Colors.white)),
               ),
             ),
-            Text(
-              "PrestService",
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF006C67),
-              ),
-            ),
+            Text("PrestService", style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold, color: const Color(0xFF006C67))),
             const SizedBox(height: 4),
-            Text(
-              "Faça seu login",
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                color: Colors.grey[700],
-              ),
-            ),
+            Text("Faça seu login", style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[700])),
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
@@ -64,9 +60,7 @@ class LoginScreen extends StatelessWidget {
                 controller: emailController,
                 decoration: InputDecoration(
                   labelText: "Email",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
                 ),
               ),
             ),
@@ -77,9 +71,7 @@ class LoginScreen extends StatelessWidget {
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: "Senha",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
                 ),
               ),
             ),
@@ -90,15 +82,10 @@ class LoginScreen extends StatelessWidget {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF75A99D),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                 ),
-                onPressed: () {},
-                child: const Text(
-                  "Entrar",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
+                onPressed: _login,
+                child: const Text("Entrar", style: TextStyle(fontSize: 16, color: Colors.white)),
               ),
             ),
             const SizedBox(height: 20),
@@ -108,20 +95,12 @@ class LoginScreen extends StatelessWidget {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF006C67),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                 ),
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const InitialScreen()),
-                  );
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const InitialScreen()));
                 },
-                child: const Text(
-                  "Voltar",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
+                child: const Text("Voltar", style: TextStyle(fontSize: 16, color: Colors.white)),
               ),
             ),
             const SizedBox(height: 40),
@@ -131,9 +110,7 @@ class LoginScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 image: const DecorationImage(
-                  image: NetworkImage(
-                    "https://via.placeholder.com/400x150.png?text=Banner",
-                  ),
+                  image: NetworkImage("https://via.placeholder.com/400x150.png?text=Banner"),
                   fit: BoxFit.cover,
                 ),
               ),

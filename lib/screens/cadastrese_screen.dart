@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:prest_service/models/user_model.dart';
 import 'package:prest_service/screens/initial_screen.dart';
-import 'login_screen.dart';
+import '../services/auth_service.dart';
+import '../services/firestore_service.dart';
 
 class CadastroScreen extends StatefulWidget {
   const CadastroScreen({super.key});
@@ -20,18 +22,38 @@ class _CadastroScreenState extends State<CadastroScreen> {
   String? _tipoUsuario;
   bool _termosAceitos = false;
 
-  void _cadastrar() {
+  final AuthService _authService = AuthService();
+  final FirestoreService _firestoreService = FirestoreService();
+
+  void _cadastrar() async {
     if (_formKey.currentState!.validate() && _termosAceitos) {
-      final usuario = {
-        "nome": _nomeController.text.trim(),
-        "email": _emailController.text.trim(),
-        "senha": _senhaController.text.trim(),
-        "telefone": _telefoneController.text.trim(),
-        "cidade": _cidadeController.text.trim(),
-        "endereco": _enderecoController.text.trim(),
-        "tipoUsuario": _tipoUsuario
-      };
-      print(usuario);
+      try {
+        final cred = await _authService.registrar(
+          _emailController.text.trim(),
+          _senhaController.text.trim(),
+        );
+
+        final usuario = UserModel(
+          uid: cred.user!.uid,
+          nome: _nomeController.text.trim(),
+          email: _emailController.text.trim(),
+          telefone: _telefoneController.text.trim(),
+          cidade: _cidadeController.text.trim(),
+          endereco: _enderecoController.text.trim(),
+          tipoUsuario: _tipoUsuario!,
+        );
+
+        await _firestoreService.salvarUsuario(usuario);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const InitialScreen()),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao cadastrar: ${e.toString()}')),
+        );
+      }
     }
   }
 
@@ -107,7 +129,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                   ElevatedButton(
                     onPressed: () => Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (_) => InitialScreen()),
+                      MaterialPageRoute(builder: (_) => const InitialScreen()),
                     ),
                     child: const Text('Voltar'),
                   ),
