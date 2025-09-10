@@ -6,6 +6,10 @@ class UserModel {
   final String cidade;
   final String endereco;
   final String tipoUsuario;
+  final String? profissao;
+  final String? descricao;
+  final List<String>? categorias;
+  final double avaliacao;
 
   UserModel({
     required this.uid,
@@ -15,6 +19,10 @@ class UserModel {
     required this.cidade,
     required this.endereco,
     required this.tipoUsuario,
+    this.profissao,
+    this.descricao,
+    this.categorias,
+    this.avaliacao = 0.0,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,19 +34,26 @@ class UserModel {
       'cidade': cidade,
       'endereco': endereco,
       'tipoUsuario': tipoUsuario,
-      'criadoEm': DateTime.now(),
+      'profissao': profissao,
+      'descricao': descricao,
+      'categorias': categorias ?? [],
+      'avaliacao': avaliacao,
     };
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      uid: map['uid'],
-      nome: map['nome'],
-      email: map['email'],
-      telefone: map['telefone'],
-      cidade: map['cidade'],
-      endereco: map['endereco'],
-      tipoUsuario: map['tipoUsuario'],
+      uid: map['uid'] as String,
+      nome: map['nome'] as String,
+      email: map['email'] as String,
+      telefone: map['telefone'] as String,
+      cidade: map['cidade'] as String,
+      endereco: map['endereco'] as String,
+      tipoUsuario: map['tipoUsuario'] as String,
+      profissao: map['profissao'] as String?,
+      descricao: map['descricao'] as String?,
+      categorias: map['categorias'] != null ? List<String>.from(map['categorias']) : [],
+      avaliacao: (map['avaliacao'] ?? 0).toDouble(),
     );
   }
 }
