@@ -1,4 +1,7 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:prest_service/models/user_model.dart';
 import 'package:prest_service/screens/initial_screen.dart';
 import '../services/auth_service.dart';
@@ -13,30 +16,39 @@ class CadastroScreen extends StatefulWidget {
 
 class _CadastroScreenState extends State<CadastroScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
   final TextEditingController _telefoneController = TextEditingController();
   final TextEditingController _cidadeController = TextEditingController();
   final TextEditingController _enderecoController = TextEditingController();
-
   final TextEditingController _profissaoController = TextEditingController();
   final TextEditingController _descricaoController = TextEditingController();
 
   String? _tipoUsuario;
   bool _termosAceitos = false;
   bool _isSubmitting = false;
-
   List<String> _categoriasSelecionadas = [];
   List<String> _categorias = [];
+  File? _imagemSelecionada;
+  String? _imagemBase64;
 
   final AuthService _authService = AuthService();
   final FirestoreService _firestoreService = FirestoreService();
 
+  Future<void> _selecionarImagem() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      setState(() {
+        _imagemSelecionada = File(picked.path);
+        _imagemBase64 = base64Encode(_imagemSelecionada!.readAsBytesSync());
+      });
+    }
+  }
+
   void _cadastrar() async {
     final formValid = _formKey.currentState?.validate() ?? false;
-
     if (_tipoUsuario == 'Prestador') {
       if (_profissaoController.text.trim().isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Informe a profissão')));
@@ -51,21 +63,17 @@ class _CadastroScreenState extends State<CadastroScreen> {
         return;
       }
     }
-
     if (!formValid) return;
     if (!_termosAceitos) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Aceite os termos de uso')));
       return;
     }
-
     setState(() => _isSubmitting = true);
-
     try {
       final cred = await _authService.registrar(
         _emailController.text.trim(),
         _senhaController.text.trim(),
       );
-
       final usuario = UserModel(
         uid: cred.user!.uid,
         nome: _nomeController.text.trim(),
@@ -78,10 +86,9 @@ class _CadastroScreenState extends State<CadastroScreen> {
         descricao: _tipoUsuario == 'Prestador' ? _descricaoController.text.trim() : null,
         categorias: _tipoUsuario == 'Prestador' ? _categoriasSelecionadas : [],
         avaliacao: 0.0,
+        fotoBase64: _imagemBase64,
       );
-
       await _firestoreService.salvarUsuario(usuario);
-
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const InitialScreen()),
@@ -108,7 +115,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,6 +128,15 @@ class _CadastroScreenState extends State<CadastroScreen> {
           key: _formKey,
           child: Column(
             children: [
+              GestureDetector(
+                onTap: _selecionarImagem,
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: _imagemSelecionada != null ? FileImage(_imagemSelecionada!) : null,
+                  child: _imagemSelecionada == null ? const Icon(Icons.add_a_photo, size: 40) : null,
+                ),
+              ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _nomeController,
                 decoration: const InputDecoration(labelText: 'Nome'),

@@ -10,6 +10,7 @@ class UserModel {
   final String? descricao;
   final List<String>? categorias;
   final double avaliacao;
+  final String? fotoBase64; // 🔹 foto convertida para texto
 
   UserModel({
     required this.uid,
@@ -22,7 +23,8 @@ class UserModel {
     this.profissao,
     this.descricao,
     this.categorias,
-    this.avaliacao = 0.0,
+    required this.avaliacao,
+    this.fotoBase64,
   });
 
   Map<String, dynamic> toMap() {
@@ -36,24 +38,26 @@ class UserModel {
       'tipoUsuario': tipoUsuario,
       'profissao': profissao,
       'descricao': descricao,
-      'categorias': categorias ?? [],
+      'categorias': categorias,
       'avaliacao': avaliacao,
+      'fotoBase64': fotoBase64,
     };
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      uid: map['uid'] as String,
-      nome: map['nome'] as String,
-      email: map['email'] as String,
-      telefone: map['telefone'] as String,
-      cidade: map['cidade'] as String,
-      endereco: map['endereco'] as String,
-      tipoUsuario: map['tipoUsuario'] as String,
-      profissao: map['profissao'] as String?,
-      descricao: map['descricao'] as String?,
-      categorias: map['categorias'] != null ? List<String>.from(map['categorias']) : [],
+      uid: map['uid'],
+      nome: map['nome'],
+      email: map['email'],
+      telefone: map['telefone'],
+      cidade: map['cidade'],
+      endereco: map['endereco'],
+      tipoUsuario: map['tipoUsuario'],
+      profissao: map['profissao'],
+      descricao: map['descricao'],
+      categorias: List<String>.from(map['categorias'] ?? []),
       avaliacao: (map['avaliacao'] ?? 0).toDouble(),
+      fotoBase64: map['fotoBase64'],
     );
   }
 }
