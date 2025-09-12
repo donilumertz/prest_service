@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:prest_service/services/auth_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/auth_service.dart';
+import '../models/user_model.dart';
 import 'home_screen.dart';
 import 'initial_screen.dart';
 
@@ -15,14 +17,23 @@ class LoginScreen extends StatelessWidget {
 
     void _login() async {
       try {
-        await _authService.login(
+        final credential = await _authService.login(
           emailController.text.trim(),
           passwordController.text.trim(),
         );
 
+        final doc = await FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(credential.user!.uid)
+            .get();
+
+        final currentUser = UserModel.fromMap(doc.data()!);
+
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          MaterialPageRoute(
+            builder: (_) => HomeScreen(currentUser: currentUser),
+          ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -39,7 +50,13 @@ class LoginScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               alignment: Alignment.topLeft,
-              child: Text("PS", style: GoogleFonts.pacifico(color: const Color(0xFF006C67), fontSize: 22)),
+              child: Text(
+                "PS",
+                style: GoogleFonts.pacifico(
+                  color: const Color(0xFF006C67),
+                  fontSize: 22,
+                ),
+              ),
             ),
             const SizedBox(height: 10),
             Container(
@@ -47,12 +64,22 @@ class LoginScreen extends StatelessWidget {
               child: CircleAvatar(
                 radius: 50,
                 backgroundColor: const Color(0xFF006C67),
-                child: Text("PS", style: GoogleFonts.pacifico(fontSize: 36, color: Colors.white)),
+                child: Text(
+                  "PS",
+                  style: GoogleFonts.pacifico(fontSize: 36, color: Colors.white),
+                ),
               ),
             ),
-            Text("PrestService", style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold, color: const Color(0xFF006C67))),
+            Text(
+              "PrestService",
+              style: GoogleFonts.poppins(
+                  fontSize: 24, fontWeight: FontWeight.bold, color: const Color(0xFF006C67)),
+            ),
             const SizedBox(height: 4),
-            Text("Faça seu login", style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[700])),
+            Text(
+              "Faça seu login",
+              style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[700]),
+            ),
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
@@ -98,7 +125,8 @@ class LoginScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                 ),
                 onPressed: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const InitialScreen()));
+                  Navigator.pushReplacement(
+                      context, MaterialPageRoute(builder: (_) => const InitialScreen()));
                 },
                 child: const Text("Voltar", style: TextStyle(fontSize: 16, color: Colors.white)),
               ),

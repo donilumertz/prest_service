@@ -8,17 +8,18 @@ class FirestoreService {
     await _db.collection('usuarios').doc(usuario.uid).set(usuario.toMap());
   }
 
-  Future<List<String>> buscarCategorias() async {
+  Future<List<String>> getCategorias() async {
     final snapshot = await _db.collection('categorias').get();
-    return snapshot.docs.map((doc) {
-      final data = doc.data();
-      final nome = data['nome'];
-      if (nome != null) {
-        return nome.toString();
-      } else {
-        return '';
-      }
-    }).where((s) => s.isNotEmpty).toList();
+    return snapshot.docs.map((doc) => doc['nome'].toString()).toList();
+  }
+
+  Future<List<UserModel>> getProfissionaisPorCategoria(String categoria) async {
+    final snapshot = await _db
+        .collection('usuarios')
+        .where('tipoUsuario', isEqualTo: 'Prestador')
+        .where('categorias', arrayContains: categoria)
+        .get();
+    return snapshot.docs.map((doc) => UserModel.fromMap(doc.data())).toList();
   }
 
   Future<void> atualizarAvaliacao(String uid, double novaAvaliacao) async {

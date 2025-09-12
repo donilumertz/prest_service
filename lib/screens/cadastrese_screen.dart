@@ -109,7 +109,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
   }
 
   void _carregarCategorias() async {
-    final categoriasDoBanco = await _firestoreService.buscarCategorias();
+    final categoriasDoBanco = await _firestoreService.getCategorias();
     setState(() {
       _categorias = categoriasDoBanco..sort((a, b) => a.compareTo(b));
     });
