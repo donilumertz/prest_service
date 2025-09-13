@@ -22,9 +22,18 @@ class AppDrawer extends StatelessWidget {
               )
                   : null,
               child: currentUser.fotoBase64 == null
-                  ? Icon(Icons.person, size: 40)
+                  ? const Icon(Icons.person, size: 40)
                   : null,
             ),
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.dashboard),
+            title: const Text('Home'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, '/home', arguments: currentUser);
+            },
           ),
 
           ListTile(

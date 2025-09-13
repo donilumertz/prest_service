@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/firestore_service.dart';
+import '../widgets/user_card.dart';
+import '../widgets/app_drawer.dart';
 
 class ServicesScreen extends StatefulWidget {
   final UserModel currentUser;
@@ -23,9 +25,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
 
   Future<void> carregarCategorias() async {
     categorias = await FirestoreService().getCategorias();
-    categorias.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase())); // ordena alfabeticamente
+    categorias.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
-    // seleciona a primeira categoria por padrão
     if (categorias.isNotEmpty) {
       selectedCategoria = categorias.first;
       await carregarProfissionais(selectedCategoria!);
@@ -43,6 +44,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Serviços')),
+      drawer: AppDrawer(currentUser: widget.currentUser),
       body: Column(
         children: [
           SizedBox(
@@ -81,14 +83,10 @@ class _ServicesScreenState extends State<ServicesScreen> {
                 : ListView.builder(
               itemCount: profissionais.length,
               itemBuilder: (context, index) {
-                final user = profissionais[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  child: ListTile(
-                    title: Text(user.nome),
-                    subtitle: Text(user.profissao ?? ''),
-                    trailing: Text(user.avaliacao.toStringAsFixed(1)),
-                  ),
+                return UserCard(
+                  user: profissionais[index],
+                  onTap: () {
+                  },
                 );
               },
             ),
