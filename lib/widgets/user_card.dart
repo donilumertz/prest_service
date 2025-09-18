@@ -1,74 +1,68 @@
-import 'dart:convert';
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:prest_service/screens/users_detail_screen.dart';
 import '../models/user_model.dart';
+import 'dart:convert';
 
 class UserCard extends StatelessWidget {
   final UserModel user;
   final VoidCallback? onTap;
-
   const UserCard({super.key, required this.user, this.onTap});
-
-  Color _corAleatoria(String seed) {
-    final rand = Random(seed.hashCode);
-    return Color.fromARGB(
-      255,
-      rand.nextInt(156) + 100,
-      rand.nextInt(156) + 100,
-      rand.nextInt(156) + 100,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
-    final avatarColor = _corAleatoria(user.nome);
-
-    return Card(
-      color: const Color(0xFF92C9C3),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(12),
-        leading: user.fotoBase64 != null && user.fotoBase64!.isNotEmpty
-            ? CircleAvatar(
-          radius: 28,
-          backgroundImage: MemoryImage(base64Decode(user.fotoBase64!)),
-        )
-            : CircleAvatar(
-          radius: 28,
-          backgroundColor: avatarColor,
-          child: Text(
-            user.nome.isNotEmpty ? user.nome[0].toUpperCase() : '?',
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
-          ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => UserDetailScreen(user: user)),
+        );
+        if (onTap != null) onTap!();
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: const [
+            BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+          ],
         ),
-        title: Text(
-          user.nome,
-          style: const TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            if (user.profissao != null) Text(user.profissao!, style: const TextStyle(color: Colors.black87)),
-            if (user.descricao != null) Text(user.descricao!, style: const TextStyle(color: Colors.black54)),
-            Text('Cidade: ${user.cidade}', style: const TextStyle(color: Colors.black87)),
-            const SizedBox(height: 4),
-            Row(
-              children: List.generate(
-                5,
-                    (i) => Icon(
-                  i < user.avaliacao.round() ? Icons.star : Icons.star_border,
-                  color: Colors.amber,
-                  size: 20,
-                ),
+            user.fotoBase64 != null
+                ? CircleAvatar(
+              radius: 30,
+              backgroundImage: MemoryImage(base64Decode(user.fotoBase64!)),
+            )
+                : const CircleAvatar(
+              radius: 30,
+              child: Icon(Icons.person),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(user.nome, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text(user.profissao ?? '', style: const TextStyle(fontSize: 14, color: Colors.grey)),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: List.generate(
+                      5,
+                          (index) => Icon(
+                        index < user.avaliacao.round() ? Icons.star : Icons.star_border,
+                        color: Colors.amber,
+                        size: 16,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.black54),
-        onTap: onTap,
       ),
     );
   }

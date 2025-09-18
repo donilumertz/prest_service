@@ -1,31 +1,53 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 class UserModel {
   final String uid;
   final String nome;
   final String email;
-  final String telefone;
-  final String cidade;
-  final String endereco;
+  final String? telefone;
+  final String? cidade;
+  final String? endereco;
   final String tipoUsuario;
   final String? profissao;
   final String? descricao;
   final List<String>? categorias;
-  final double avaliacao;
-  final String? fotoBase64; // 🔹 foto convertida para texto
+  final double avaliacao; // média geral do usuário
+  final String? fotoBase64;
 
   UserModel({
     required this.uid,
     required this.nome,
     required this.email,
-    required this.telefone,
-    required this.cidade,
-    required this.endereco,
+    this.telefone,
+    this.cidade,
+    this.endereco,
     required this.tipoUsuario,
     this.profissao,
     this.descricao,
     this.categorias,
-    required this.avaliacao,
+    this.avaliacao = 0.0,
     this.fotoBase64,
   });
+
+  Uint8List? get fotoBytes => fotoBase64 != null ? base64Decode(fotoBase64!) : null;
+
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
+      uid: map['uid'] ?? '',
+      nome: map['nome'] ?? '',
+      email: map['email'] ?? '',
+      telefone: map['telefone'],
+      cidade: map['cidade'],
+      endereco: map['endereco'],
+      tipoUsuario: map['tipoUsuario'] ?? '',
+      profissao: map['profissao'],
+      descricao: map['descricao'],
+      categorias: map['categorias'] != null ? List<String>.from(map['categorias']) : null,
+      avaliacao: (map['avaliacao'] != null) ? (map['avaliacao'] as num).toDouble() : 0.0,
+      fotoBase64: map['fotoBase64'],
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -42,22 +64,5 @@ class UserModel {
       'avaliacao': avaliacao,
       'fotoBase64': fotoBase64,
     };
-  }
-
-  factory UserModel.fromMap(Map<String, dynamic> map) {
-    return UserModel(
-      uid: map['uid'],
-      nome: map['nome'],
-      email: map['email'],
-      telefone: map['telefone'],
-      cidade: map['cidade'],
-      endereco: map['endereco'],
-      tipoUsuario: map['tipoUsuario'],
-      profissao: map['profissao'],
-      descricao: map['descricao'],
-      categorias: List<String>.from(map['categorias'] ?? []),
-      avaliacao: (map['avaliacao'] ?? 0).toDouble(),
-      fotoBase64: map['fotoBase64'],
-    );
   }
 }

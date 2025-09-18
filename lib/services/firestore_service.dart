@@ -25,4 +25,20 @@ class FirestoreService {
   Future<void> atualizarAvaliacao(String uid, double novaAvaliacao) async {
     await _db.collection('usuarios').doc(uid).update({'avaliacao': novaAvaliacao});
   }
+
+  Future<void> salvarComentario(String uid, String comentario) async {
+    await _db.collection('usuarios').doc(uid).collection('comentarios').add({
+      'comentario': comentario,
+      'data': DateTime.now(),
+    });
+  }
+
+  Stream<QuerySnapshot> streamComentarios(String uid) {
+    return _db
+        .collection('usuarios')
+        .doc(uid)
+        .collection('comentarios')
+        .orderBy('data', descending: true)
+        .snapshots();
+  }
 }
