@@ -3,6 +3,7 @@ import '../models/user_model.dart';
 import '../services/firestore_service.dart';
 import '../widgets/user_card.dart';
 import '../widgets/app_drawer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ServicesScreen extends StatefulWidget {
   final UserModel currentUser;
@@ -36,7 +37,25 @@ class _ServicesScreenState extends State<ServicesScreen> {
   }
 
   Future<void> carregarProfissionais(String categoria) async {
-    profissionais = await FirestoreService().getProfissionaisPorCategoria(categoria);
+    List<UserModel> lista = await FirestoreService().getProfissionaisPorCategoria(categoria);
+
+    for (int i = 0; i < lista.length; i++) {
+      final uidProf = lista[i].uid;
+      final snapshot = await FirebaseFirestore.instance
+          .collection('avaliacoes')
+          .where('uidProfissional', isEqualTo: uidProf)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        double soma = 0;
+        for (var doc in snapshot.docs) {
+          soma += (doc['nota'] as num).toDouble();
+        }
+        double media = soma / snapshot.docs.length;
+      }
+    }
+
+    profissionais = lista;
     setState(() {});
   }
 
@@ -83,11 +102,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                 : ListView.builder(
               itemCount: profissionais.length,
               itemBuilder: (context, index) {
-                return UserCard(
-                  user: profissionais[index],
-                  onTap: () {
-                  },
-                );
+                return UserCard(user: profissionais[index]);
               },
             ),
           ),

@@ -14,16 +14,19 @@ class FirestoreService {
   }
 
   Future<List<UserModel>> getProfissionaisPorCategoria(String categoria) async {
-    final snapshot = await _db
-        .collection('usuarios')
-        .where('tipoUsuario', isEqualTo: 'Prestador')
-        .where('categorias', arrayContains: categoria)
-        .get();
+    final snapshot =
+        await _db
+            .collection('usuarios')
+            .where('tipoUsuario', isEqualTo: 'Prestador')
+            .where('categorias', arrayContains: categoria)
+            .get();
     return snapshot.docs.map((doc) => UserModel.fromMap(doc.data())).toList();
   }
 
   Future<void> atualizarAvaliacao(String uid, double novaAvaliacao) async {
-    await _db.collection('usuarios').doc(uid).update({'avaliacao': novaAvaliacao});
+    await _db.collection('usuarios').doc(uid).update({
+      'avaliacao': novaAvaliacao,
+    });
   }
 
   Future<void> salvarComentario(String uid, String comentario) async {
@@ -40,5 +43,35 @@ class FirestoreService {
         .collection('comentarios')
         .orderBy('data', descending: true)
         .snapshots();
+  }
+
+  Future<void> salvarAvaliacaoUsuario({
+    required String uidUsuario,
+    required String uidProfissional,
+    required double nota,
+  }) async {
+    await _db.collection('avaliacoes').add({
+      'uidUsuario': uidUsuario,
+      'uidProfissional': uidProfissional,
+      'nota': nota,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<double> calcularMediaAvaliacao(String uidProfissional) async {
+    final snapshot =
+        await _db
+            .collection('avaliacoes')
+            .where('uidProfissional', isEqualTo: uidProfissional)
+            .get();
+
+    if (snapshot.docs.isEmpty) return 0;
+
+    double soma = 0;
+    for (var doc in snapshot.docs) {
+      soma += (doc['nota'] as num).toDouble();
+    }
+
+    return soma / snapshot.docs.length;
   }
 }

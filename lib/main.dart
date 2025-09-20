@@ -13,6 +13,8 @@ import 'models/user_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await criarCollectionAvaliacao();
+
   runApp(const MyApp());
 }
 
@@ -75,4 +77,16 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+Future<void> criarCollectionAvaliacao() async {
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+
+  await db.collection('avaliacoes').doc('placeholder').set({
+    'uidUsuario': 'placeholder',
+    'uidProfissional': 'placeholder',
+    'nota': 0,
+    'timestamp': FieldValue.serverTimestamp(),
+  });
+
+  print('Collection "avaliacoes" criada no Firestore.');
 }

@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import '../models/user_model.dart';
 import '../services/firestore_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserDetailScreen extends StatefulWidget {
   final UserModel user;
-  const UserDetailScreen({super.key, required this.user});
+  final String uidUsuarioAtual; // UID do usuário logado
+
+  const UserDetailScreen({
+    super.key,
+    required this.user,
+    required this.uidUsuarioAtual,
+  });
 
   @override
   State<UserDetailScreen> createState() => _UserDetailScreenState();
@@ -19,7 +26,33 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _avaliacaoLocal = widget.user.avaliacao;
+    _buscarAvaliacao();
+  }
+
+  void _buscarAvaliacao() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('avaliacoes')
+        .where('uidUsuario', isEqualTo: widget.uidUsuarioAtual)
+        .where('uidProfissional', isEqualTo: widget.user.uid)
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      setState(() {
+        _avaliacaoLocal = (snapshot.docs.first.data()['nota'] as num).toDouble();
+      });
+    }
+  }
+
+  void _atualizarAvaliacao(double novaAvaliacao) {
+    setState(() {
+      _avaliacaoLocal = novaAvaliacao;
+    });
+
+    _firestoreService.salvarAvaliacaoUsuario(
+      uidUsuario: widget.uidUsuarioAtual,
+      uidProfissional: widget.user.uid,
+      nota: novaAvaliacao,
+    );
   }
 
   void _salvarComentario() {
@@ -27,13 +60,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     if (comentario.isEmpty) return;
     _firestoreService.salvarComentario(widget.user.uid, comentario);
     _comentarioController.clear();
-  }
-
-  void _atualizarAvaliacao(double novaAvaliacao) {
-    setState(() {
-      _avaliacaoLocal = novaAvaliacao;
-    });
-    _firestoreService.atualizarAvaliacao(widget.user.uid, novaAvaliacao);
   }
 
   @override
@@ -107,7 +133,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
             ElevatedButton(
               onPressed: _salvarComentario,
               style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF006C67)),
-              child: const Text('Salvar'),
+              child: const Text('Salvar Comentário'),
             ),
           ],
         ),

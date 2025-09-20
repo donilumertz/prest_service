@@ -14,7 +14,7 @@ class UserCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => UserDetailScreen(user: user)),
+          MaterialPageRoute(builder: (_) => UserDetailScreen(user: user, uidUsuarioAtual: '',)),
         );
         if (onTap != null) onTap!();
       },
