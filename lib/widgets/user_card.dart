@@ -14,7 +14,7 @@ class UserCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => UserDetailScreen(user: user, uidUsuarioAtual: '',)),
+          MaterialPageRoute(builder: (_) => UserDetailScreen(user: user, uidUsuarioAtual: '')),
         );
         if (onTap != null) onTap!();
       },
@@ -47,6 +47,15 @@ class UserCard extends StatelessWidget {
                   Text(user.nome, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
                   Text(user.profissao ?? '', style: const TextStyle(fontSize: 14, color: Colors.grey)),
+                  if (user.descricao != null && user.descricao!.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      user.descricao!,
+                      style: const TextStyle(fontSize: 13, color: Colors.black54),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                   const SizedBox(height: 4),
                   Row(
                     children: List.generate(
