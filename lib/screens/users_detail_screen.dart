@@ -22,11 +22,19 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   final FirestoreService _firestoreService = FirestoreService();
   final TextEditingController _comentarioController = TextEditingController();
   double _avaliacaoLocal = 0;
+  double _mediaAvaliacao = 0;
 
   @override
   void initState() {
     super.initState();
     _buscarAvaliacao();
+    _buscarMedia();
+  }
+
+  _buscarMedia() async {
+    var response = await _firestoreService.calcularMediaAvaliacao(widget.user.uid);
+    _mediaAvaliacao = response.toDouble();
+    debugPrint(_mediaAvaliacao.toString());
   }
 
   void _buscarAvaliacao() async {
@@ -41,6 +49,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
         _avaliacaoLocal = (snapshot.docs.first.data()['nota'] as num).toDouble();
       });
     }
+
+    _buscarMedia();
   }
 
   void _atualizarAvaliacao(double novaAvaliacao) {
@@ -157,7 +167,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                 backgroundImage: MemoryImage(base64Decode(widget.user.fotoBase64!)),
               ),
             const SizedBox(height: 8),
-            _buildStars(_avaliacaoLocal),
+            _buildStars(_mediaAvaliacao, editable: true),
             const SizedBox(height: 8),
             Text(widget.user.nome,
                 style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF004D4A))),
