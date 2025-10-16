@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
@@ -6,8 +8,19 @@ class AppDrawer extends StatelessWidget {
   final UserModel currentUser;
   const AppDrawer({super.key, required this.currentUser});
 
+  Uint8List? _decodeImage(String? base64String) {
+    if (base64String == null || base64String.isEmpty) return null;
+    try {
+      return base64Decode(base64String);
+    } catch (e) {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final fotoBytes = _decodeImage(currentUser.fotoBase64);
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -16,12 +29,9 @@ class AppDrawer extends StatelessWidget {
             accountName: Text(currentUser.nome),
             accountEmail: Text(currentUser.email),
             currentAccountPicture: CircleAvatar(
-              backgroundImage: currentUser.fotoBase64 != null
-                  ? MemoryImage(
-                Uri.parse(currentUser.fotoBase64!).data!.contentAsBytes(),
-              )
-                  : null,
-              child: currentUser.fotoBase64 == null
+              backgroundImage:
+              fotoBytes != null ? MemoryImage(fotoBytes) : null,
+              child: fotoBytes == null
                   ? const Icon(Icons.person, size: 40)
                   : null,
             ),
@@ -37,7 +47,7 @@ class AppDrawer extends StatelessWidget {
           ),
 
           ListTile(
-            leading: const Icon(Icons.home),
+            leading: const Icon(Icons.home_repair_service),
             title: const Text('Serviços'),
             onTap: () {
               Navigator.pop(context);
@@ -45,7 +55,7 @@ class AppDrawer extends StatelessWidget {
             },
           ),
 
-          if (currentUser.tipoUsuario == 'profissional') ...[
+          if (currentUser.tipoUsuario.toLowerCase() == 'profissional') ...[
             ListTile(
               leading: const Icon(Icons.assignment),
               title: const Text('Minhas Atividades'),
@@ -56,7 +66,7 @@ class AppDrawer extends StatelessWidget {
             ),
           ],
 
-          if (currentUser.tipoUsuario == 'cliente') ...[
+          if (currentUser.tipoUsuario.toLowerCase() == 'cliente') ...[
             ListTile(
               leading: const Icon(Icons.shopping_cart),
               title: const Text('Meus Pedidos'),
@@ -82,7 +92,11 @@ class AppDrawer extends StatelessWidget {
             onTap: () async {
               await AuthService().logout();
               Navigator.pop(context);
-              Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/login',
+                    (route) => false,
+              );
             },
           ),
         ],
