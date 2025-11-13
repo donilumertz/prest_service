@@ -27,7 +27,7 @@ class AppDrawer extends StatelessWidget {
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(currentUser.nome),
-            accountEmail: Text(currentUser.email),
+            accountEmail: Text(currentUser.email ?? ""),
             currentAccountPicture: CircleAvatar(
               backgroundImage:
               fotoBytes != null ? MemoryImage(fotoBytes) : null,

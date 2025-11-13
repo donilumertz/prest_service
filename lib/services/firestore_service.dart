@@ -10,36 +10,39 @@ class FirestoreService {
 
   Future<List<String>> getCategorias() async {
     final snapshot = await _db.collection('categorias').get();
-    return snapshot.docs.map((doc) => doc['nome'].toString()).toList();
+    return snapshot.docs.map((d) => d['nome'].toString()).toList();
   }
 
   Future<List<UserModel>> getProfissionaisPorCategoria(String categoria) async {
-    final snapshot =
-        await _db
-            .collection('usuarios')
-            .where('tipoUsuario', isEqualTo: 'Prestador')
-            .where('categorias', arrayContains: categoria)
-            .get();
-    return snapshot.docs.map((doc) => UserModel.fromMap(doc.data())).toList();
+    final snap = await _db
+        .collection('usuarios')
+        .where('tipoUsuario', isEqualTo: 'Prestador')
+        .where('categorias', arrayContains: categoria)
+        .get();
+
+    return snap.docs.map((d) => UserModel.fromMap(d.data())).toList();
   }
 
-  Future<void> atualizarAvaliacao(String uid, double novaAvaliacao) async {
-    await _db.collection('usuarios').doc(uid).update({
-      'avaliacao': novaAvaliacao,
-    });
-  }
-
-  Future<void> salvarComentario(String uid, String comentario) async {
-    await _db.collection('usuarios').doc(uid).collection('comentarios').add({
+  Future<void> salvarComentario(
+      String uidProfissional,
+      String comentario,
+      String uidUsuario,
+      ) async {
+    await _db
+        .collection('usuarios')
+        .doc(uidProfissional)
+        .collection('comentarios')
+        .add({
       'comentario': comentario,
-      'data': DateTime.now(),
+      'uidUsuario': uidUsuario,
+      'data': FieldValue.serverTimestamp(),
     });
   }
 
-  Stream<QuerySnapshot> streamComentarios(String uid) {
+  Stream<QuerySnapshot> streamComentarios(String uidProfissional) {
     return _db
         .collection('usuarios')
-        .doc(uid)
+        .doc(uidProfissional)
         .collection('comentarios')
         .orderBy('data', descending: true)
         .snapshots();
@@ -50,7 +53,22 @@ class FirestoreService {
     required String uidProfissional,
     required double nota,
   }) async {
-    await _db.collection('avaliacoes').add({
+    final col = _db.collection('avaliacoes');
+
+    final existing = await col
+        .where('uidUsuario', isEqualTo: uidUsuario)
+        .where('uidProfissional', isEqualTo: uidProfissional)
+        .get();
+
+    if (existing.docs.isNotEmpty) {
+      await col.doc(existing.docs.first.id).update({
+        'nota': nota,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      return;
+    }
+
+    await col.add({
       'uidUsuario': uidUsuario,
       'uidProfissional': uidProfissional,
       'nota': nota,
@@ -59,19 +77,18 @@ class FirestoreService {
   }
 
   Future<double> calcularMediaAvaliacao(String uidProfissional) async {
-    final snapshot =
-        await _db
-            .collection('avaliacoes')
-            .where('uidProfissional', isEqualTo: uidProfissional)
-            .get();
+    final snap = await _db
+        .collection('avaliacoes')
+        .where('uidProfissional', isEqualTo: uidProfissional)
+        .get();
 
-    if (snapshot.docs.isEmpty) return 0;
+    if (snap.docs.isEmpty) return 0;
 
     double soma = 0;
-    for (var doc in snapshot.docs) {
+    for (var doc in snap.docs) {
       soma += (doc['nota'] as num).toDouble();
     }
 
-    return soma / snapshot.docs.length;
+    return soma / snap.docs.length;
   }
 }

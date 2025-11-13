@@ -31,10 +31,11 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     _buscarMedia();
   }
 
-  _buscarMedia() async {
-    var response = await _firestoreService.calcularMediaAvaliacao(widget.user.uid);
-    _mediaAvaliacao = response.toDouble();
-    debugPrint(_mediaAvaliacao.toString());
+  Future<void> _buscarMedia() async {
+    final response = await _firestoreService.calcularMediaAvaliacao(widget.user.uid);
+    setState(() {
+      _mediaAvaliacao = response.toDouble();
+    });
   }
 
   void _buscarAvaliacao() async {
@@ -63,12 +64,20 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
       uidProfissional: widget.user.uid,
       nota: novaAvaliacao,
     );
+
+    _buscarMedia();
   }
 
   void _salvarComentario() {
-    String comentario = _comentarioController.text.trim();
+    final comentario = _comentarioController.text.trim();
     if (comentario.isEmpty) return;
-    _firestoreService.salvarComentario(widget.user.uid, comentario);
+
+    _firestoreService.salvarComentario(
+      widget.user.uid,
+      comentario,
+      widget.uidUsuarioAtual,
+    );
+
     _comentarioController.clear();
   }
 
@@ -167,7 +176,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                 backgroundImage: MemoryImage(base64Decode(widget.user.fotoBase64!)),
               ),
             const SizedBox(height: 8),
-            _buildStars(_mediaAvaliacao, editable: true),
+            _buildStars(_mediaAvaliacao, editable: false),
             const SizedBox(height: 8),
             Text(widget.user.nome,
                 style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF004D4A))),
@@ -245,7 +254,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
             ),
             const SizedBox(height: 20),
 
-            // ---------- Comentários ----------
             StreamBuilder<QuerySnapshot>(
               stream: _firestoreService.streamComentarios(widget.user.uid),
               builder: (context, snapshot) {
@@ -269,7 +277,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                   children: comentarios.map((c) {
                     final data = (c.data() as Map<String, dynamic>?) ?? {};
                     final comentarioText = (data['comentario'] as String?) ?? '';
-                    final uidComentador = (data['uidUsuario'] as String?) ;
+                    final uidComentador = (data['uidUsuario'] as String?);
                     final timestamp = data['data'] as Timestamp?;
                     final dataFormatada = timestamp?.toDate();
 
@@ -290,7 +298,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         }
 
                         if (!userSnapshot.hasData || userSnapshot.data == null || !userSnapshot.data!.exists) {
-                          // Usuário não existe → exibir anônimo
                           return _buildCommentTile(
                             nome: 'Usuário',
                             fotoBase64: null,
@@ -315,7 +322,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                 );
               },
             ),
-
           ],
         ),
       ),
