@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/user_model.dart';
 import '../services/firestore_service.dart';
 
@@ -54,18 +55,18 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     _buscarMedia();
   }
 
-  void _atualizarAvaliacao(double novaAvaliacao) {
+  Future<void> _atualizarAvaliacao(double novaAvaliacao) async {
     setState(() {
       _avaliacaoLocal = novaAvaliacao;
     });
 
-    _firestoreService.salvarAvaliacaoUsuario(
+    await _firestoreService.salvarAvaliacaoUsuario(
       uidUsuario: widget.uidUsuarioAtual,
       uidProfissional: widget.user.uid,
       nota: novaAvaliacao,
     );
 
-    _buscarMedia();
+    await _buscarMedia();
   }
 
   void _salvarComentario() {
@@ -80,6 +81,24 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
     _comentarioController.clear();
   }
+
+  void _abrirWhatsApp(String? numero) async {
+    final Uri url = Uri.parse("https://wa.me/$numero?text=Ola, vim do prestService");
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
+    } else {
+      // fallback
+      await launchUrl(
+        url,
+        mode: LaunchMode.platformDefault,
+      );
+    }
+  }
+
 
   Widget _buildStars(double rating, {bool editable = false}) {
     return Row(
@@ -202,18 +221,12 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF006C67),
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                  ),
-                  onPressed: () {},
-                  child: const Text("Contratar"),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF7DB9B6),
                     padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    _abrirWhatsApp(widget.user.telefone ?? "");
+                  },
                   child: const Text("Mensagem"),
                 ),
               ],
@@ -253,17 +266,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
               ),
             ),
             const SizedBox(height: 20),
-
             StreamBuilder<QuerySnapshot>(
               stream: _firestoreService.streamComentarios(widget.user.uid),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return const Padding(
                     padding: EdgeInsets.all(8.0),
@@ -293,11 +298,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
                       future: FirebaseFirestore.instance.collection('usuarios').doc(uidComentador).get(),
                       builder: (context, userSnapshot) {
-                        if (userSnapshot.connectionState == ConnectionState.waiting) {
-                          return const SizedBox.shrink();
-                        }
-
-                        if (!userSnapshot.hasData || userSnapshot.data == null || !userSnapshot.data!.exists) {
+                        if (!userSnapshot.hasData ||
+                            userSnapshot.data == null ||
+                            !userSnapshot.data!.exists) {
                           return _buildCommentTile(
                             nome: 'Usuário',
                             fotoBase64: null,
