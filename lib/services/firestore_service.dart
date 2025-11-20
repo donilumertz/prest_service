@@ -76,6 +76,14 @@ class FirestoreService {
     });
   }
 
+  Future<void> deletarUsuario(String uid) async {
+    await _db.collection('usuarios').doc(uid).delete();
+  }
+
+  Future<void> atualizarUsuario(Map<String, dynamic> dados, String uid) async {
+    await _db.collection('usuarios').doc(uid).update(dados);
+  }
+
   Future<double> calcularMediaAvaliacao(String uidProfissional) async {
     final snap = await _db
         .collection('avaliacoes')
