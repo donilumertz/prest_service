@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:prest_service/models/user_model.dart';
 import 'package:prest_service/services/firestore_service.dart';
 
@@ -18,6 +20,8 @@ class _EditarPerfilScreenState extends State<EditProfileScreen> {
   late TextEditingController profissao;
   late TextEditingController descricao;
 
+  String? novaFotoBase64;
+
   @override
   void initState() {
     super.initState();
@@ -26,6 +30,18 @@ class _EditarPerfilScreenState extends State<EditProfileScreen> {
     cidade = TextEditingController(text: widget.user.cidade ?? "");
     profissao = TextEditingController(text: widget.user.profissao ?? "");
     descricao = TextEditingController(text: widget.user.descricao ?? "");
+  }
+
+  Future<void> selecionarFoto() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+
+    if (picked != null) {
+      final bytes = await picked.readAsBytes();
+      setState(() {
+        novaFotoBase64 = base64Encode(bytes);
+      });
+    }
   }
 
   Future<void> salvar() async {
@@ -40,6 +56,10 @@ class _EditarPerfilScreenState extends State<EditProfileScreen> {
     if (widget.user.tipoUsuario == "Prestador") {
       dadosAtualizados['profissao'] = profissao.text;
       dadosAtualizados['descricao'] = descricao.text;
+    }
+
+    if (novaFotoBase64 != null) {
+      dadosAtualizados['fotoBase64'] = novaFotoBase64 ?? "";
     }
 
     await firestore.atualizarUsuario(dadosAtualizados, widget.user.uid);
@@ -60,6 +80,34 @@ class _EditarPerfilScreenState extends State<EditProfileScreen> {
           key: _formKey,
           child: ListView(
             children: [
+              Center(
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 55,
+                      backgroundImage:
+                      novaFotoBase64 != null
+                          ? MemoryImage(base64Decode(novaFotoBase64!))
+                          : widget.user.fotoBase64 != null
+                          ? MemoryImage(base64Decode(widget.user.fotoBase64!))
+                          : null,
+                      child: (widget.user.fotoBase64 == null && novaFotoBase64 == null)
+                          ? const Icon(Icons.person, size: 50, color: Colors.white)
+                          : null,
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton.icon(
+                      onPressed: selecionarFoto,
+                      icon: const Icon(Icons.camera_alt),
+                      label: const Text("Alterar Foto"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF006C67),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
               TextFormField(controller: nome, decoration: const InputDecoration(labelText: "Nome")),
               TextFormField(controller: telefone, decoration: const InputDecoration(labelText: "Telefone")),
               TextFormField(controller: cidade, decoration: const InputDecoration(labelText: "Cidade")),
