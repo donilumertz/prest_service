@@ -120,7 +120,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cadastro'),
-        backgroundColor: const Color(0xFF006C67),
+        backgroundColor: const Color(0xFF4A4A4A),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -236,16 +236,17 @@ class _CadastroScreenState extends State<CadastroScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: _cadastrar,
-                      child: const Text('Cadastrar'),
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF006C67)),
+                      child: const Text('Cadastrar', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(
+                          0xFF6161E8)),
                     ),
                     ElevatedButton(
                       onPressed: () => Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (_) => const InitialScreen()),
                       ),
-                      child: const Text('Voltar'),
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF92C9C3)),
+                      child: const Text('Voltar', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4A4A4A)),
                     ),
                   ],
                 ),

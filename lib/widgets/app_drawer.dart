@@ -6,6 +6,7 @@ import '../services/auth_service.dart';
 
 class AppDrawer extends StatelessWidget {
   final UserModel currentUser;
+
   const AppDrawer({super.key, required this.currentUser});
 
   Uint8List? _decodeImage(String? base64String) {
@@ -26,14 +27,16 @@ class AppDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
+            decoration: const BoxDecoration(
+              color: Color(0xFF4A4A4A),
+            ),
             accountName: Text(currentUser.nome),
             accountEmail: Text(currentUser.email ?? ""),
             currentAccountPicture: CircleAvatar(
               backgroundImage:
-              fotoBytes != null ? MemoryImage(fotoBytes) : null,
-              child: fotoBytes == null
-                  ? const Icon(Icons.person, size: 40)
-                  : null,
+                  fotoBytes != null ? MemoryImage(fotoBytes) : null,
+              child:
+                  fotoBytes == null ? const Icon(Icons.person, size: 40) : null,
             ),
           ),
 
@@ -61,7 +64,11 @@ class AppDrawer extends StatelessWidget {
               title: const Text('Minhas Atividades'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, '/atividades', arguments: currentUser);
+                Navigator.pushNamed(
+                  context,
+                  '/atividades',
+                  arguments: currentUser,
+                );
               },
             ),
           ],
@@ -72,7 +79,11 @@ class AppDrawer extends StatelessWidget {
               title: const Text('Meus Pedidos'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, '/pedidos', arguments: currentUser);
+                Navigator.pushNamed(
+                  context,
+                  '/pedidos',
+                  arguments: currentUser,
+                );
               },
             ),
           ],
@@ -95,7 +106,7 @@ class AppDrawer extends StatelessWidget {
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 '/login',
-                    (route) => false,
+                (route) => false,
               );
             },
           ),

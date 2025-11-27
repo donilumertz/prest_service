@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profissionais'),
-        backgroundColor: const Color(0xFF006C67),
+        backgroundColor: Color(0xFF4A4A4A),
       ),
       drawer: AppDrawer(currentUser: widget.currentUser),
       body: prestadores.isEmpty

@@ -4,7 +4,7 @@ import 'package:prest_service/models/user_model.dart';
 import 'package:prest_service/screens/edit_profile_screen.dart';
 import 'package:prest_service/services/auth_service.dart';
 import 'package:prest_service/services/firestore_service.dart';
-import '../screens/initial_screen.dart';
+import 'initial_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PerfilScreen extends StatefulWidget {
@@ -71,7 +71,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Meu Perfil'),
-        backgroundColor: const Color(0xFF006C67),
+        backgroundColor: const Color(0xFF4A4A4A),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -112,11 +112,11 @@ class _PerfilScreenState extends State<PerfilScreen> {
                       builder: (_) => EditProfileScreen(user: user),
                     ),
                   ).then((_) {
-                    carregarUsuario(); // <<< RECARREGA AO VOLTAR
+                    carregarUsuario();
                   });
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
-                child: const Text('Editar Perfil'),
+                child: const Text('Editar Perfil',  style: TextStyle(color: Colors.white)),
               ),
             ),
             const SizedBox(height: 12),
@@ -124,8 +124,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () => logout(context),
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF006C67)),
-                child: const Text('Deslogar'),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(
+                    0xFF6161E8)),
+                child: const Text('Sair',  style: TextStyle(color: Colors.white)),
               ),
             ),
             const SizedBox(height: 12),
@@ -134,7 +135,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
               child: ElevatedButton(
                 onPressed: () => deletarConta(context),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: const Text('Excluir Conta'),
+                child: const Text('Excluir Conta',  style: TextStyle(color: Colors.white)),
               ),
             ),
           ],

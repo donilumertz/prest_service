@@ -53,7 +53,7 @@ class LoginScreen extends StatelessWidget {
               child: Text(
                 "PS",
                 style: GoogleFonts.pacifico(
-                  color: const Color(0xFF006C67),
+                  color: const Color(0xFF4A4A4A),
                   fontSize: 22,
                 ),
               ),
@@ -63,7 +63,7 @@ class LoginScreen extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: CircleAvatar(
                 radius: 50,
-                backgroundColor: const Color(0xFF006C67),
+                backgroundColor: const Color(0xFF4A4A4A),
                 child: Text(
                   "PS",
                   style: GoogleFonts.pacifico(fontSize: 36, color: Colors.white),
@@ -73,7 +73,8 @@ class LoginScreen extends StatelessWidget {
             Text(
               "PrestService",
               style: GoogleFonts.poppins(
-                  fontSize: 24, fontWeight: FontWeight.bold, color: const Color(0xFF006C67)),
+                  fontSize: 24, fontWeight: FontWeight.bold, color: const Color(
+                  0xFF4A4A4A)),
             ),
             const SizedBox(height: 4),
             Text(
@@ -108,7 +109,7 @@ class LoginScreen extends StatelessWidget {
               height: 45,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF75A99D),
+                  backgroundColor: const Color(0xFF4A4A4A),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                 ),
                 onPressed: _login,
@@ -121,7 +122,7 @@ class LoginScreen extends StatelessWidget {
               height: 45,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF006C67),
+                  backgroundColor: const Color(0xFF4A4A4A),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                 ),
                 onPressed: () {

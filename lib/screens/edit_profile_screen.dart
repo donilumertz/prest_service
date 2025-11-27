@@ -72,7 +72,7 @@ class _EditarPerfilScreenState extends State<EditProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Editar Perfil"),
-        backgroundColor: const Color(0xFF006C67),
+        backgroundColor: const Color(0xFF4A4A4A),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -98,10 +98,10 @@ class _EditarPerfilScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: 10),
                     ElevatedButton.icon(
                       onPressed: selecionarFoto,
-                      icon: const Icon(Icons.camera_alt),
-                      label: const Text("Alterar Foto"),
+                      icon: const Icon(Icons.camera_alt, color: Colors.white,),
+                      label: const Text("Alterar Foto", style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF006C67),
+                        backgroundColor: const Color(0xFF4A4A4A),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -118,8 +118,9 @@ class _EditarPerfilScreenState extends State<EditProfileScreen> {
               const SizedBox(height: 25),
               ElevatedButton(
                 onPressed: salvar,
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF006C67)),
-                child: const Text("Salvar Alterações"),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(
+                    0xFF4A4A4A)),
+                child: const Text("Salvar Alterações",  style: TextStyle(color: Colors.white)),
               ),
             ],
           ),

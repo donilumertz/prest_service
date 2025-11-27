@@ -83,7 +83,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Serviços'),
-        backgroundColor: const Color(0xFF006C67),
+        backgroundColor: const Color(0xFF4A4A4A),
       ),
       drawer: AppDrawer(currentUser: widget.currentUser),
       body: Column(
@@ -101,7 +101,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
-                      selected ? const Color(0xFF006C67) : Colors.grey[300],
+                      selected ? const Color(0xFF4A4A4A) : Colors.grey[300],
                     ),
                     onPressed: () {
                       setState(() => selectedCategoria = cat);

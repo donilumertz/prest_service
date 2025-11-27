@@ -29,7 +29,7 @@ class InitialScreen extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 50,
-                backgroundColor: const Color(0xFF007B7A),
+                backgroundColor: const Color(0xFF4A4A4A),
                 child: const Text(
                   "PS",
                   style: TextStyle(
@@ -44,7 +44,7 @@ class InitialScreen extends StatelessWidget {
                 "PrestService",
                 style: TextStyle(
                   fontSize: 24,
-                  color: Color(0xFF007B7A),
+                  color: Color(0xFF4A4A4A),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -54,7 +54,7 @@ class InitialScreen extends StatelessWidget {
                 height: 45,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF92C9C3),
+                    backgroundColor: const Color(0xFF4A4A4A),
                   ),
                   onPressed: () {
                     Navigator.push(
@@ -62,7 +62,7 @@ class InitialScreen extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => const LoginScreen()),
                     );
                   },
-                  child: const Text("Entrar"),
+                  child: const Text("Entrar", style: TextStyle(color: Colors.white),),
                 ),
               ),
               const SizedBox(height: 20),
@@ -71,7 +71,7 @@ class InitialScreen extends StatelessWidget {
                 height: 45,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF92C9C3),
+                    backgroundColor: const Color(0xFF4A4A4A),
                   ),
                   onPressed: () {
                     Navigator.push(
@@ -79,7 +79,7 @@ class InitialScreen extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => const CadastroScreen()),
                     );
                   },
-                  child: const Text("Cadastrar-se"),
+                  child: const Text("Cadastrar-se", style: TextStyle(color: Colors.white)),
                 ),
               ),
             ],

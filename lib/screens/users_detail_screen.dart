@@ -25,6 +25,13 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   double _avaliacaoLocal = 0;
   double _mediaAvaliacao = 0;
 
+  final Color primary = const Color(0xFF4A4A4A);
+  final Color background = const Color(0xFFF5F5F5);
+  final Color card = Colors.white;
+  final Color textPrimary = Colors.black87;
+  final Color textSecondary = Colors.black54;
+  final Color ratingColor = const Color(0xFFFBC02D);
+
   @override
   void initState() {
     super.initState();
@@ -84,21 +91,12 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
   void _abrirWhatsApp(String? numero) async {
     final Uri url = Uri.parse("https://wa.me/$numero?text=Ola, vim do prestService");
-
     if (await canLaunchUrl(url)) {
-      await launchUrl(
-        url,
-        mode: LaunchMode.externalApplication,
-      );
+      await launchUrl(url, mode: LaunchMode.externalApplication);
     } else {
-      // fallback
-      await launchUrl(
-        url,
-        mode: LaunchMode.platformDefault,
-      );
+      await launchUrl(url, mode: LaunchMode.platformDefault);
     }
   }
-
 
   Widget _buildStars(double rating, {bool editable = false}) {
     return Row(
@@ -111,7 +109,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
           onPressed: editable ? () => _atualizarAvaliacao(star.toDouble()) : null,
           icon: Icon(
             star <= rating ? Icons.star : Icons.star_border,
-            color: Colors.amber,
+            color: ratingColor,
           ),
         );
       }),
@@ -132,8 +130,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.teal.shade50,
+        color: card,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.black12),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,23 +150,13 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
               children: [
                 Row(
                   children: [
-                    Text(
-                      nome,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, color: Color(0xFF004D4A)),
-                    ),
+                    Text(nome, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const Spacer(),
-                    Text(
-                      dateText,
-                      style: const TextStyle(fontSize: 12, color: Colors.black54),
-                    ),
+                    Text(dateText, style: const TextStyle(fontSize: 12, color: Colors.black54)),
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  comentario,
-                  style: const TextStyle(color: Colors.black87),
-                ),
+                Text(comentario, style: const TextStyle(color: Colors.black87)),
               ],
             ),
           ),
@@ -179,9 +168,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE9F7F6),
+      backgroundColor: background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF006C67),
+        backgroundColor: primary,
         title: Text(widget.user.nome),
         centerTitle: true,
       ),
@@ -198,52 +187,50 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
             _buildStars(_mediaAvaliacao, editable: false),
             const SizedBox(height: 8),
             Text(widget.user.nome,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF004D4A))),
-            Text(widget.user.cidade ?? '', style: const TextStyle(color: Colors.black87)),
-            Text(widget.user.profissao ?? '', style: const TextStyle(color: Colors.black54)),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textPrimary)),
+            Text(widget.user.cidade ?? '', style: TextStyle(color: textSecondary)),
+            Text(widget.user.profissao ?? '', style: TextStyle(color: textSecondary)),
             const SizedBox(height: 16),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.teal.shade50,
+                color: card,
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.black12),
               ),
               child: Text(
                 widget.user.descricao ?? '',
                 textAlign: TextAlign.justify,
-                style: const TextStyle(fontSize: 15, color: Colors.black87),
+                style: TextStyle(fontSize: 15, color: textPrimary),
               ),
             ),
             const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7DB9B6),
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                  ),
-                  onPressed: () {
-                    _abrirWhatsApp(widget.user.telefone ?? "");
-                  },
-                  child: const Text("Mensagem"),
-                ),
-              ],
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primary,
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+              ),
+              onPressed: () {
+                _abrirWhatsApp(widget.user.telefone ?? "");
+              },
+              child: const Text("Mensagem", style: TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 24),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.teal.shade50,
+                color: card,
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.black12),
               ),
               child: Column(
                 children: [
-                  const Text(
+                  Text(
                     "Deixe Sua Avaliação...",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF004D4A)),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: textPrimary),
                   ),
                   _buildStars(_avaliacaoLocal, editable: true),
                   const SizedBox(height: 8),
@@ -252,13 +239,18 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     decoration: InputDecoration(
                       hintText: "Digite aqui...",
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: card,
                       suffixIcon: IconButton(
-                        icon: const Icon(Icons.send, color: Color(0xFF006C67)),
+                        icon: Icon(Icons.send, color: primary),
                         onPressed: _salvarComentario,
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.black26),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.black26),
                       ),
                     ),
                   ),
@@ -296,7 +288,10 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     }
 
                     return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                      future: FirebaseFirestore.instance.collection('usuarios').doc(uidComentador).get(),
+                      future: FirebaseFirestore.instance
+                          .collection('usuarios')
+                          .doc(uidComentador)
+                          .get(),
                       builder: (context, userSnapshot) {
                         if (!userSnapshot.hasData ||
                             userSnapshot.data == null ||
