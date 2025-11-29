@@ -73,20 +73,7 @@ class AppDrawer extends StatelessWidget {
             ),
           ],
 
-          if (currentUser.tipoUsuario.toLowerCase() == 'cliente') ...[
-            ListTile(
-              leading: const Icon(Icons.shopping_cart),
-              title: const Text('Meus Pedidos'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(
-                  context,
-                  '/pedidos',
-                  arguments: currentUser,
-                );
-              },
-            ),
-          ],
+          if (currentUser.tipoUsuario.toLowerCase() == 'cliente') ...[],
 
           ListTile(
             leading: const Icon(Icons.person),
